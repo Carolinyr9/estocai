@@ -1,7 +1,6 @@
 package br.rocha.estocai.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import br.rocha.estocai.model.Category;
 import br.rocha.estocai.model.dtos.CategoryRequestDto;
