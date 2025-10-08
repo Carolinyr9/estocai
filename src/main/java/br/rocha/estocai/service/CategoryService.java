@@ -32,7 +32,7 @@ public class CategoryService {
     }
 
     public CategoryResponseDto updateCategoryPartial(Long id, CategoryPatchDto data){
-        Category existingCategory = thereAreCategory(id);
+        Category existingCategory = thereIsCategory(id);
 
         data.name().ifPresent(existingCategory::setName);
         data.description().ifPresent(existingCategory::setDescription);
@@ -42,7 +42,7 @@ public class CategoryService {
     }
 
     public CategoryResponseDto updateCategory(Long id, CategoryRequestDto data){
-        Category existingCategory = thereAreCategory(id);
+        Category existingCategory = thereIsCategory(id);
 
         existingCategory.setName(data.name());
         existingCategory.setDescription(data.description());
@@ -57,7 +57,7 @@ public class CategoryService {
     }
 
     public CategoryResponseDto getCategoryById(Long id){
-        Category category = thereAreCategory(id);
+        Category category = thereIsCategory(id);
         return mapper.categoryToCategoryResponseDto(category);
     }
 
@@ -67,11 +67,11 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id){
-        thereAreCategory(id);
+        thereIsCategory(id);
         categoryRepository.deleteById(id);
     }
 
-    private Category thereAreCategory(Long id){
+    private Category thereIsCategory(Long id){
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found " + id));
         return existingCategory;
