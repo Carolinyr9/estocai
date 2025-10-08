@@ -1,13 +1,13 @@
 package br.rocha.estocai.model.enums;
 
-public enum TipoMovimentacao {
-    ENTRADA ("entrada"),
-    SAIDA ("saida"),
-    EDITADO ("editado");
+public enum MovementType {
+    ENTRY("entry"),
+    EXIT("exit"),
+    EDITED("edited");
 
     private final String value;
 
-    TipoMovimentacao(String value) {
+    MovementType(String value) {
         this.value = value;
     }
 

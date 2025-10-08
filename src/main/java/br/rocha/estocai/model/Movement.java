@@ -1,8 +1,8 @@
 package br.rocha.estocai.model;
 
 import java.util.Date;
-import br.rocha.estocai.model.enums.DescricaoMovimentacao;
-import br.rocha.estocai.model.enums.TipoMovimentacao;
+import br.rocha.estocai.model.enums.MovementDescription;
+import br.rocha.estocai.model.enums.MovementType;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,8 +24,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "movimentacao")
-public class Movimentacao {
+@Table(name = "movements")
+public class Movement {
 
     @Id
     @GeneratedValue
@@ -37,15 +37,16 @@ public class Movimentacao {
 
     @Nonnull
     @Enumerated(EnumType.STRING)
-    private TipoMovimentacao tipo;
+    private MovementType type;
 
     @Nonnull
     @Enumerated(EnumType.STRING)
-    private DescricaoMovimentacao descricao;
+    private MovementDescription description;
+
     //private User user
 
     @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private Produto produto;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
 }

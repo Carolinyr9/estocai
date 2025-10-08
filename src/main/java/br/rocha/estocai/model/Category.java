@@ -20,20 +20,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "categorias")
-public class Categoria {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue
     private Long id;
 
     @NonNull
     @Column(unique = true)
-    private String nome;
+    private String name;
 
     @NonNull
-    private String descricao;
+    private String description;
     
-    @OneToMany(mappedBy = "categoria")
-    private List<Produto> produtos;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 
 }

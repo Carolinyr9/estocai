@@ -23,30 +23,30 @@ import io.micrometer.common.lang.NonNull;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "produtos")
-public class Produto {
+@Table(name = "products")
+public class Product {
     @Id
     @GeneratedValue
     private Long id;
 
     @NonNull
     @Column(unique=true)
-    private String nome;
+    private String name;
 
     @NonNull
-    private String descricao;
+    private String description;
 
     @NonNull
-    private Double preco;
+    private Double price;
 
     @NonNull
-    private Integer quantidade;
+    private Integer quantity;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    @OneToMany(mappedBy = "produto")
-    private List<Movimentacao> movimentacoes;
+    @OneToMany(mappedBy = "product")
+    private List<Movement> movements;
 
 }
