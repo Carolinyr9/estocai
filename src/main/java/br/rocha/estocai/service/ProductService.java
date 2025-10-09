@@ -1,6 +1,10 @@
 package br.rocha.estocai.service;
 
+import javax.management.InvalidAttributeValueException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.rocha.estocai.exceptions.ResourceNotFoundException;
@@ -13,6 +17,7 @@ import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
 import br.rocha.estocai.repository.ProductRepository;
+import lombok.val;
 
 @Service
 public class ProductService {
@@ -56,6 +61,7 @@ public class ProductService {
 
         data.name().ifPresent(existingProduct::setName);
         data.description().ifPresent(existingProduct::setDescription);
+
         data.price().ifPresent(existingProduct::setPrice);
         data.quantity().ifPresent(existingProduct::setQuantity);
         data.categoryId().ifPresent(categoryId -> {
@@ -66,6 +72,26 @@ public class ProductService {
         Product productSaved = productRepository.save(existingProduct);
 
         return mapper.productToProductResponseDto(productSaved);
+    }
+
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable){
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(product -> mapper.productToProductResponseDto(product));
+    }
+
+    public ProductResponseDto getProductById(Long id){
+        Product product = thereIsProduct(id);
+        return mapper.productToProductResponseDto(product);
+    }
+
+    public ProductResponseDto getProductByName(String name){
+        Product product = productRepository.findByName(name);
+        return mapper.productToProductResponseDto(product);
+    }
+
+    public void deleteProduct(Long id){
+        thereIsProduct(id);
+        productRepository.deleteById(id);
     }
 
     private Product thereIsProduct(Long id){

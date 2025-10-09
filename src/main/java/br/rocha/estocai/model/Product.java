@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,9 +36,11 @@ public class Product {
     private String description;
 
     @NonNull
+    @Positive
     private Double price;
 
     @NonNull
+    @Positive
     private Integer quantity;
 
     @ManyToOne
