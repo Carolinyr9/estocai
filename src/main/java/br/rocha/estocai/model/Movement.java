@@ -30,6 +30,10 @@ public class Movement {
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
     
     @Nonnull
     @Temporal(TemporalType.TIMESTAMP)
@@ -44,9 +48,5 @@ public class Movement {
     private MovementDescription description;
 
     //private User user
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 
 }
