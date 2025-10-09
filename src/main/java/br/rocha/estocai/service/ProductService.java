@@ -90,6 +90,27 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public ProductResponseDto decreaseQuantity(Long id){
+        Product product = thereIsProduct(id);
+        product.setQuantity(product.getQuantity() - 1);
+        Product saved = productRepository.save(product);
+        return mapper.productToProductResponseDto(saved);
+    }
+
+    public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
+        Product product = thereIsProduct(id);
+        product.setQuantity(quantity);
+        Product saved = productRepository.save(product);
+        return mapper.productToProductResponseDto(saved);
+    }
+
+    public ProductResponseDto increaseQuantity(Long id, Integer quantity){
+        Product product = thereIsProduct(id);
+        product.setQuantity(product.getQuantity() + 1);
+        Product saved = productRepository.save(product);
+        return mapper.productToProductResponseDto(saved);
+    }
+
     private Product thereIsProduct(Long id){
         Product existingProduct = productRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found " + id));
