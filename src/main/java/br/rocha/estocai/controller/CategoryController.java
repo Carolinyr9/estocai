@@ -60,9 +60,24 @@ public class CategoryController {
             @ApiResponse(responseCode = "400", description = "Invalid requisition")
         }
     )
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
         CategoryResponseDto category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
+    }
+
+    @Operation(
+        summary = "Search for categories by id",
+        description = "Return a category registred",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Category found"),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+        }
+    )
+    @GetMapping("/{name}")
+    public ResponseEntity<CategoryResponseDto> getCategoryByName(@PathVariable String name) {
+        CategoryResponseDto category = categoryService.getCategoryByName(name);
         return ResponseEntity.ok(category);
     }
 

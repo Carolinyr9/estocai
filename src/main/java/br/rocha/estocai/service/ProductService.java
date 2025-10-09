@@ -1,12 +1,9 @@
 package br.rocha.estocai.service;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import br.rocha.estocai.exceptions.ResourceNotFoundException;
 import br.rocha.estocai.mappers.CategoryMapper;
 import br.rocha.estocai.mappers.ProductMapper;
@@ -17,7 +14,6 @@ import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
 import br.rocha.estocai.repository.ProductRepository;
-import lombok.val;
 
 @Service
 public class ProductService {
