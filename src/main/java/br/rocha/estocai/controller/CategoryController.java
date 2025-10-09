@@ -67,7 +67,7 @@ public class CategoryController {
     }
 
     @Operation(
-        summary = "Search for categories by id",
+        summary = "Search for categories by name",
         description = "Return a category registred",
         responses = {
             @ApiResponse(responseCode = "200", description = "Category found"),
