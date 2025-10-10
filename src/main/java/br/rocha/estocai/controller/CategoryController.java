@@ -6,8 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.rocha.estocai.model.dtos.CategoryPatchDto;
 import br.rocha.estocai.model.dtos.CategoryRequestDto;
@@ -18,127 +17,110 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 @RestController
 @RequestMapping("/categories")
 @Tag(name = "Category", description = "Operations about categories")
 @Validated
 public class CategoryController {
-	@Autowired
-    CategoryService categoryService;
+
+    private final CategoryService categoryService;
+
+    @Autowired
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @Operation(
-        summary = "Search for categories",
+        summary = "Get all categories",
         description = "Return a pageable list of registered categories",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Category found"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "200", description = "Category list returned")
         }
     )
     @GetMapping
     public ResponseEntity<Page<CategoryResponseDto>> getAllCategories(Pageable pageable) {
-        Page<CategoryResponseDto> categories = categoryService.getAllCategories(pageable);
-        return ResponseEntity.ok(categories);
+        return ResponseEntity.ok(categoryService.getAllCategories(pageable));
     }
 
     @Operation(
-        summary = "Search for categories by id",
-        description = "Return a category registred",
+        summary = "Get category by ID",
+        description = "Return a single category by its ID",
         responses = {
             @ApiResponse(responseCode = "200", description = "Category found"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "404", description = "Category not found")
         }
     )
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
-        CategoryResponseDto category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(category);
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @Operation(
-        summary = "Search for categories by name",
-        description = "Return a category registred",
+        summary = "Get category by name",
+        description = "Return a category by its name",
         responses = {
             @ApiResponse(responseCode = "200", description = "Category found"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "404", description = "Category not found")
         }
     )
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<CategoryResponseDto> getCategoryByName(@PathVariable String name) {
-        CategoryResponseDto category = categoryService.getCategoryByName(name);
-        return ResponseEntity.ok(category);
+        return ResponseEntity.ok(categoryService.getCategoryByName(name));
     }
 
     @Operation(
         summary = "Create category",
-        description = "Create a category from the param",
+        description = "Create a new category",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Category created"),
-            @ApiResponse(responseCode = "409", description = "Category already registred"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "201", description = "Category created")
         }
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponseDto createCategory(@Valid @RequestBody CategoryRequestDto data){
-        CategoryResponseDto category = categoryService.createCategory(data);
-        return category;
+    public CategoryResponseDto createCategory(@Valid @RequestBody CategoryRequestDto data) {
+        return categoryService.createCategory(data);
     }
-    
+
     @Operation(
-        summary = "Update partial of a category",
-        description = "Partially changes an existing category",
+        summary = "Update category partially",
+        description = "Partially update an existing category",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Category changed"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "200", description = "Category updated"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
         }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryResponseDto> updateCategoryPartial(@PathVariable Long id, @Valid @RequestBody CategoryPatchDto data){
-        CategoryResponseDto category = categoryService.updateCategoryPartial(id, data);
-        return ResponseEntity.ok(category);
+    public ResponseEntity<CategoryResponseDto> updateCategoryPartial(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryPatchDto data) {
+        return ResponseEntity.ok(categoryService.updateCategoryPartial(id, data));
     }
 
     @Operation(
-        summary = "Update complete of a category",
-        description = "Completely changes an existing category",
+        summary = "Update category completely",
+        description = "Completely replace an existing category",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Category changed"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "200", description = "Category updated"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
         }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDto data){
-        CategoryResponseDto category = categoryService.updateCategory(id, data);
-        return ResponseEntity.ok(category);
+    public ResponseEntity<CategoryResponseDto> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryRequestDto data) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, data));
     }
 
     @Operation(
-        summary = "Delete a category registred",
-        description = "Delete a category already registred",
+        summary = "Delete category",
+        description = "Delete a registered category",
         responses = {
-            @ApiResponse(responseCode = "204", description = "Category deleted, no content more"),
-            @ApiResponse(responseCode = "404", description = "Category not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid requisition")
+            @ApiResponse(responseCode = "204", description = "Category deleted")
         }
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable Long id){
+    public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
     }
 }

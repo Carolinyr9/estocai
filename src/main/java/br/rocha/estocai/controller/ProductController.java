@@ -16,6 +16,8 @@ import br.rocha.estocai.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,7 +44,7 @@ public class ProductController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResponseDto createProduct(@RequestBody ProductRequestDto data) {
+    public ProductResponseDto createProduct(@Valid @RequestBody ProductRequestDto data) {
         ProductResponseDto product = productService.createProduct(data);
         return product;
     }
@@ -57,7 +59,7 @@ public class ProductController {
         }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDto data) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDto data) {
         ProductResponseDto product = productService.updateProduct(id, data);
         return ResponseEntity.ok(product);
     }
@@ -72,7 +74,7 @@ public class ProductController {
         }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @RequestBody ProductPatchDto data) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductPatchDto data) {
         ProductResponseDto product = productService.updateProductPartial(id, data);
         return ResponseEntity.ok(product);
     }
@@ -116,7 +118,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid Requisition")
         }
     )
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<ProductResponseDto> getProductByName(@PathVariable String name){
         ProductResponseDto product = productService.getProductByName(name);
         return ResponseEntity.ok(product);
@@ -131,7 +133,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid Requisition")
         }
     )
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Long id){
         productService.deleteProduct(id);

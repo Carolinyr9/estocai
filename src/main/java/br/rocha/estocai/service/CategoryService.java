@@ -67,6 +67,7 @@ public class CategoryService {
         return mapper.categoryToCategoryResponseDto(category);
     }
 
+    @Transactional
     public void deleteCategory(Long id){
         Category category = findExistingCategory(id);
         categoryRepository.delete(category);
