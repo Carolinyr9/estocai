@@ -1,5 +1,7 @@
 package br.rocha.estocai.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,12 @@ public class MovementController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<Page<MovementResponseDto>> getMovementsByDProductId(Pageable pageable, @PathVariable Long productId){
         Page<MovementResponseDto> movement = movementService.getMovementsByProductId(productId, pageable);
+        return ResponseEntity.ok(movement);
+    }
+
+    @GetMapping("/date/{startDate}/{endDate}")
+    public ResponseEntity<Page<MovementResponseDto>> getMovementsByDate(Pageable pageable, @PathVariable Date startDate, @PathVariable Date endDate){
+        Page<MovementResponseDto> movement = movementService.getMovementsByDate(startDate, endDate, pageable);
         return ResponseEntity.ok(movement);
     }
     

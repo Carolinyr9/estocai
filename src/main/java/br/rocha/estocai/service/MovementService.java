@@ -75,6 +75,11 @@ public class MovementService {
         return movementRepository.findByDescription(MovementDescription.valueOf(description.toUpperCase()), pageable).map(mapper::movementToMovementResponseDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<MovementResponseDto> getMovementsByDate(Date startDate, Date endDate, Pageable pageable){
+        return movementRepository.findBetweenDate(startDate, endDate, pageable).map(mapper::movementToMovementResponseDto);
+    }
+
     private void registerMovement(Product product, MovementType type, MovementDescription description) {
         Movement movement = new Movement();
         movement.setProduct(product);
