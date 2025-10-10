@@ -14,7 +14,7 @@ import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
 import br.rocha.estocai.repository.ProductRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -82,6 +82,7 @@ public class ProductService {
         return mapper.productToProductResponseDto(productSaved);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductResponseDto> getAllProducts(Pageable pageable){
         Page<Product> products = productRepository.findAll(pageable);
 
@@ -90,6 +91,7 @@ public class ProductService {
         return products.map(product -> mapper.productToProductResponseDto(product));
     }
 
+    @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long id){
         Product product = findExistingProduct(id);
 
@@ -98,6 +100,7 @@ public class ProductService {
         return mapper.productToProductResponseDto(product);
     }
 
+    @Transactional(readOnly = true)
     public ProductResponseDto getProductByName(String name){
         Product product = productRepository.findByName(name);
         if (product == null) {

@@ -13,4 +13,9 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> resouceNotFoundHandler(ResourceNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
+    }
 }
