@@ -5,7 +5,8 @@ public enum MovementDescription {
     QUANTITY_DECREASED("quantity decreased"),
     QUANTITY_INCREASED("quantity increased"),
     EDITED("edited"),
-    REMOVED("removed");
+    REMOVED("removed"),
+    CONSULT("consult");
 
     private final String value;
     

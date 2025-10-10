@@ -29,11 +29,16 @@ public class ProductService {
     @Autowired
     CategoryMapper categoryMapper;
 
+    @Autowired
+    MovementService movementService;
+
 
     public ProductResponseDto createProduct(ProductRequestDto data){
         Product product = mapper.productRequestDtoToProduct(data);
 
         product.setCategory(findCategory(data.categoryId()));
+
+        movementService.createProduct(product);
 
         return mapper.productToProductResponseDto(productRepository.save(product));
     }
@@ -48,6 +53,8 @@ public class ProductService {
         existingProduct.setCategory(findCategory(data.categoryId()));
 
         Product productSaved = productRepository.save(existingProduct);
+
+        movementService.updateProduct(productSaved);
 
         return mapper.productToProductResponseDto(productSaved);
     }
@@ -67,26 +74,40 @@ public class ProductService {
 
         Product productSaved = productRepository.save(existingProduct);
 
+        movementService.updateProduct(productSaved);
+
         return mapper.productToProductResponseDto(productSaved);
     }
 
     public Page<ProductResponseDto> getAllProducts(Pageable pageable){
         Page<Product> products = productRepository.findAll(pageable);
+
+        products.forEach(product -> movementService.consultProduct(product));
+
         return products.map(product -> mapper.productToProductResponseDto(product));
     }
 
     public ProductResponseDto getProductById(Long id){
         Product product = thereIsProduct(id);
+
+        movementService.consultProduct(product);
+
         return mapper.productToProductResponseDto(product);
     }
 
     public ProductResponseDto getProductByName(String name){
         Product product = productRepository.findByName(name);
+        
+        movementService.consultProduct(product);
+        
         return mapper.productToProductResponseDto(product);
     }
 
     public void deleteProduct(Long id){
         thereIsProduct(id);
+
+       productRepository.findById(id).ifPresent(movementService::removeProduct);
+
         productRepository.deleteById(id);
     }
 
@@ -94,13 +115,20 @@ public class ProductService {
         Product product = thereIsProduct(id);
         product.setQuantity(product.getQuantity() - 1);
         Product saved = productRepository.save(product);
+
+        movementService.decreaseQuantity(product);
+
         return mapper.productToProductResponseDto(saved);
     }
 
     public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
         Product product = thereIsProduct(id);
+
         product.setQuantity(quantity);
         Product saved = productRepository.save(product);
+
+        verifyAndMapMovement(product.getQuantity(), quantity, saved);
+
         return mapper.productToProductResponseDto(saved);
     }
 
@@ -120,5 +148,13 @@ public class ProductService {
     private Category findCategory(Long categoryId){
         CategoryResponseDto category = categoryService.getCategoryById(categoryId);
         return categoryMapper.categoryResponseDtoToCategory(category);
+    }
+
+    private void verifyAndMapMovement(Integer quantityBefore, Integer quantityNow, Product product){
+        if(quantityBefore > quantityNow){
+            movementService.decreaseQuantity(product);
+        } else {
+            movementService.increaseQuantity(product);
+        }
     }
 }

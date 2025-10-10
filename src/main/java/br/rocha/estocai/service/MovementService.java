@@ -53,4 +53,13 @@ public class MovementService {
         movement.setType(MovementType.EDITED);
         movement.setDescription(MovementDescription.EDITED);
     }
+
+    public void consultProduct(Product product){
+        Movement movement = new Movement();
+        movement.setProduct(product);
+        movement.setDate(new Date());
+        movement.setType(MovementType.NONE);
+        movement.setDescription(MovementDescription.CONSULT);
+    }
+
 }

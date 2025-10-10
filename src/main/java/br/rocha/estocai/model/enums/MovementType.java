@@ -3,7 +3,8 @@ package br.rocha.estocai.model.enums;
 public enum MovementType {
     ENTRY("entry"),
     EXIT("exit"),
-    EDITED("edited");
+    EDITED("edited"),
+    NONE("none");
 
     private final String value;
 
