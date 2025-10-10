@@ -11,6 +11,7 @@ import br.rocha.estocai.model.dtos.CategoryPatchDto;
 import br.rocha.estocai.model.dtos.CategoryRequestDto;
 import br.rocha.estocai.model.dtos.CategoryResponseDto;
 import br.rocha.estocai.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 
 public class CategoryService {
 
@@ -31,8 +32,9 @@ public class CategoryService {
 
     }
 
+    @Transactional
     public CategoryResponseDto updateCategoryPartial(Long id, CategoryPatchDto data){
-        Category existingCategory = thereIsCategory(id);
+        Category existingCategory = findExistingCategory(id);
 
         data.name().ifPresent(existingCategory::setName);
         data.description().ifPresent(existingCategory::setDescription);
@@ -41,8 +43,9 @@ public class CategoryService {
         return mapper.categoryToCategoryResponseDto(categorySaved);
     }
 
+    @Transactional
     public CategoryResponseDto updateCategory(Long id, CategoryRequestDto data){
-        Category existingCategory = thereIsCategory(id);
+        Category existingCategory = findExistingCategory(id);
 
         existingCategory.setName(data.name());
         existingCategory.setDescription(data.description());
@@ -51,13 +54,14 @@ public class CategoryService {
         return mapper.categoryToCategoryResponseDto(categorySaved);
     }
 
+    @Transactional
     public Page<CategoryResponseDto> getAllCategories(Pageable pageable){
         Page<Category> categories = categoryRepository.findAll(pageable);
         return categories.map(category -> mapper.categoryToCategoryResponseDto(category));
     }
 
     public CategoryResponseDto getCategoryById(Long id){
-        Category category = thereIsCategory(id);
+        Category category = findExistingCategory(id);
         return mapper.categoryToCategoryResponseDto(category);
     }
 
@@ -67,11 +71,11 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id){
-        thereIsCategory(id);
+        findExistingCategory(id);
         categoryRepository.deleteById(id);
     }
 
-    private Category thereIsCategory(Long id){
+    private Category findExistingCategory(Long id){
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found " + id));
         return existingCategory;

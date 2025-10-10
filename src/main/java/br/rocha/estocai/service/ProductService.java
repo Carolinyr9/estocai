@@ -14,6 +14,7 @@ import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
 import br.rocha.estocai.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProductService {
@@ -32,7 +33,7 @@ public class ProductService {
     @Autowired
     MovementService movementService;
 
-
+    @Transactional
     public ProductResponseDto createProduct(ProductRequestDto data){
         Product product = mapper.productRequestDtoToProduct(data);
 
@@ -43,8 +44,9 @@ public class ProductService {
         return mapper.productToProductResponseDto(productRepository.save(product));
     }
 
+    @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto data){
-        Product existingProduct = thereIsProduct(id);
+        Product existingProduct = findExistingProduct(id);
 
         existingProduct.setName(data.name());
         existingProduct.setDescription(data.description());
@@ -59,8 +61,9 @@ public class ProductService {
         return mapper.productToProductResponseDto(productSaved);
     }
 
+    @Transactional
     public ProductResponseDto updateProductPartial(Long id, ProductPatchDto data){
-        Product existingProduct = thereIsProduct(id);
+        Product existingProduct = findExistingProduct(id);
 
         data.name().ifPresent(existingProduct::setName);
         data.description().ifPresent(existingProduct::setDescription);
@@ -82,13 +85,13 @@ public class ProductService {
     public Page<ProductResponseDto> getAllProducts(Pageable pageable){
         Page<Product> products = productRepository.findAll(pageable);
 
-        products.forEach(product -> movementService.consultProduct(product));
+        products.forEach(movementService::consultProduct);
 
         return products.map(product -> mapper.productToProductResponseDto(product));
     }
 
     public ProductResponseDto getProductById(Long id){
-        Product product = thereIsProduct(id);
+        Product product = findExistingProduct(id);
 
         movementService.consultProduct(product);
 
@@ -97,23 +100,27 @@ public class ProductService {
 
     public ProductResponseDto getProductByName(String name){
         Product product = productRepository.findByName(name);
+        if (product == null) {
+            throw new ResourceNotFoundException("Product not found: " + name);
+        }
         
         movementService.consultProduct(product);
-        
+
         return mapper.productToProductResponseDto(product);
     }
 
     public void deleteProduct(Long id){
-        thereIsProduct(id);
+        Product product = findExistingProduct(id);
 
-       productRepository.findById(id).ifPresent(movementService::removeProduct);
+        movementService.removeProduct(product);
 
-        productRepository.deleteById(id);
+        productRepository.delete(product);
     }
 
-    public ProductResponseDto decreaseQuantity(Long id){
-        Product product = thereIsProduct(id);
-        product.setQuantity(product.getQuantity() - 1);
+    @Transactional
+    public ProductResponseDto decreaseQuantity(Long id, Integer quantity){
+        Product product = findExistingProduct(id);
+        product.setQuantity(product.getQuantity() - quantity);
         Product saved = productRepository.save(product);
 
         movementService.decreaseQuantity(product);
@@ -121,28 +128,33 @@ public class ProductService {
         return mapper.productToProductResponseDto(saved);
     }
 
+    @Transactional
     public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
-        Product product = thereIsProduct(id);
+        Product product = findExistingProduct(id);
 
+        int before = product.getQuantity();
         product.setQuantity(quantity);
         Product saved = productRepository.save(product);
 
-        verifyAndMapMovement(product.getQuantity(), quantity, saved);
+        verifyAndMapMovement(before, quantity, saved);
 
         return mapper.productToProductResponseDto(saved);
     }
 
+    @Transactional
     public ProductResponseDto increaseQuantity(Long id, Integer quantity){
-        Product product = thereIsProduct(id);
-        product.setQuantity(product.getQuantity() + 1);
+        Product product = findExistingProduct(id);
+        product.setQuantity(product.getQuantity() + quantity);
         Product saved = productRepository.save(product);
+
+        movementService.increaseQuantity(saved);
+
         return mapper.productToProductResponseDto(saved);
     }
 
-    private Product thereIsProduct(Long id){
-        Product existingProduct = productRepository.findById(id)
+    private Product findExistingProduct(Long id){
+        return productRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found " + id));
-        return existingProduct;
     }
 
     private Category findCategory(Long categoryId){
