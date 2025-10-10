@@ -61,7 +61,7 @@ public class MovementService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MovementResponseDto> getMovementsByProduct(Long productId, Pageable pageable){
+    public Page<MovementResponseDto> getMovementsByProductId(Long productId, Pageable pageable){
         return movementRepository.findByProductId(productId, pageable).map(mapper::movementToMovementResponseDto);
     }
 
