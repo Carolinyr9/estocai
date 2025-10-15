@@ -25,7 +25,7 @@ public class ProductService {
     CategoryService categoryService;
 
     @Autowired
-    ProductMapper mapper;
+    ProductMapper productMapper;
 
     @Autowired
     CategoryMapper categoryMapper;
@@ -35,13 +35,13 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto data){
-        Product product = mapper.productRequestDtoToProduct(data);
+        Product product = productMapper.productRequestDtoToProduct(data);
 
         product.setCategory(findCategory(data.categoryId()));
 
         movementService.createProduct(product);
 
-        return mapper.productToProductResponseDto(productRepository.save(product));
+        return productMapper.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class ProductService {
 
         movementService.updateProduct(productSaved);
 
-        return mapper.productToProductResponseDto(productSaved);
+        return productMapper.productToProductResponseDto(productSaved);
     }
 
     @Transactional
@@ -79,7 +79,7 @@ public class ProductService {
 
         movementService.updateProduct(productSaved);
 
-        return mapper.productToProductResponseDto(productSaved);
+        return productMapper.productToProductResponseDto(productSaved);
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +88,7 @@ public class ProductService {
 
         products.forEach(movementService::consultProduct);
 
-        return products.map(product -> mapper.productToProductResponseDto(product));
+        return products.map(product -> productMapper.productToProductResponseDto(product));
     }
 
     @Transactional(readOnly = true)
@@ -97,7 +97,7 @@ public class ProductService {
 
         movementService.consultProduct(product);
 
-        return mapper.productToProductResponseDto(product);
+        return productMapper.productToProductResponseDto(product);
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +109,7 @@ public class ProductService {
         
         movementService.consultProduct(product);
 
-        return mapper.productToProductResponseDto(product);
+        return productMapper.productToProductResponseDto(product);
     }
 
     public void deleteProduct(Long id){
@@ -128,7 +128,7 @@ public class ProductService {
 
         movementService.decreaseQuantity(product);
 
-        return mapper.productToProductResponseDto(saved);
+        return productMapper.productToProductResponseDto(saved);
     }
 
     @Transactional
@@ -141,7 +141,7 @@ public class ProductService {
 
         verifyAndMapMovement(before, quantity, saved);
 
-        return mapper.productToProductResponseDto(saved);
+        return productMapper.productToProductResponseDto(saved);
     }
 
     @Transactional
@@ -152,7 +152,7 @@ public class ProductService {
 
         movementService.increaseQuantity(saved);
 
-        return mapper.productToProductResponseDto(saved);
+        return productMapper.productToProductResponseDto(saved);
     }
 
     private Product findExistingProduct(Long id){
