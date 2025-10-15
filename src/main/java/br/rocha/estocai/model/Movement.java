@@ -1,6 +1,9 @@
 package br.rocha.estocai.model;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import br.rocha.estocai.model.enums.MovementDescription;
 import br.rocha.estocai.model.enums.MovementType;
 import jakarta.annotation.Nonnull;
@@ -33,6 +36,7 @@ public class Movement {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
     
     @Nonnull

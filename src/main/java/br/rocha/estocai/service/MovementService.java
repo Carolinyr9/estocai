@@ -1,8 +1,11 @@
 package br.rocha.estocai.service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -76,8 +79,11 @@ public class MovementService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MovementResponseDto> getMovementsByDate(Date startDate, Date endDate, Pageable pageable){
-        return movementRepository.findBetweenDate(startDate, endDate, pageable).map(mapper::movementToMovementResponseDto);
+    public Page<MovementResponseDto> getMovementsByDate(LocalDate startDate, LocalDate endDate, Pageable pageable){
+        Timestamp start = Timestamp.valueOf(startDate.atStartOfDay());
+        Timestamp end = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+
+        return movementRepository.findBetweenDate(start, end, pageable).map(mapper::movementToMovementResponseDto);
     }
 
     private void registerMovement(Product product, MovementType type, MovementDescription description) {

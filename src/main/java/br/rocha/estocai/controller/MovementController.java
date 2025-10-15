@@ -1,9 +1,11 @@
 package br.rocha.estocai.controller;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -88,9 +90,14 @@ public class MovementController {
         }
     )
     @GetMapping("/date/{startDate}/{endDate}")
-    public ResponseEntity<Page<MovementResponseDto>> getMovementsByDate(Pageable pageable, @PathVariable Date startDate, @PathVariable Date endDate){
+    public ResponseEntity<Page<MovementResponseDto>> getMovementsByDate(
+            Pageable pageable,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
         Page<MovementResponseDto> movement = movementService.getMovementsByDate(startDate, endDate, pageable);
         return ResponseEntity.ok(movement);
     }
+
     
 }
