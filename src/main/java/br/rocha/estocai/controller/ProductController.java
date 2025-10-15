@@ -123,6 +123,51 @@ public class ProductController {
         ProductResponseDto product = productService.getProductByName(name);
         return ResponseEntity.ok(product);
     }
+
+    @Operation(
+        summary = "Increase the atual quantity of a product",
+        description = "The quantities are added and imputed",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Product edited"),
+            @ApiResponse(responseCode = "404", description = "Product not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid Requisition")
+        }
+    )
+    @PatchMapping("/increaseQuantity/{id}")
+    public ResponseEntity<ProductResponseDto> increaseQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+        ProductResponseDto product = productService.increaseQuantity(id, quantity);
+        return ResponseEntity.ok(product);
+    }
+
+    @Operation(
+        summary = "Decrease the atual quantity of a product",
+        description = "The quantities are decremented and imputed",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Product edited"),
+            @ApiResponse(responseCode = "404", description = "Product not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid Requisition")
+        }
+    )
+    @PatchMapping("/decreaseQuantity/{id}")
+    public ResponseEntity<ProductResponseDto> decreaseQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+        ProductResponseDto product = productService.decreaseQuantity(id, quantity);
+        return ResponseEntity.ok(product);
+    }
+
+    @Operation(
+        summary = "Set the quantity",
+        description = "The quantities are replaced",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Product edited"),
+            @ApiResponse(responseCode = "404", description = "Product not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid Requisition")
+        }
+    )
+    @PatchMapping("/setQuantity/{id}")
+    public ResponseEntity<ProductResponseDto> setSpecifiQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+        ProductResponseDto product = productService.setSpecificQuantity(id, quantity);
+        return ResponseEntity.ok(product);
+    }
     
     @Operation(
         summary = "Delete a product",

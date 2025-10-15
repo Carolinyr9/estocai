@@ -1,5 +1,7 @@
 package br.rocha.estocai.service;
 
+import java.security.InvalidParameterException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -123,6 +125,11 @@ public class ProductService {
     @Transactional
     public ProductResponseDto decreaseQuantity(Long id, Integer quantity){
         Product product = findExistingProduct(id);
+
+        if(quantity > product.getQuantity()){
+            throw new InvalidParameterException("The new quantity cannot be negative");
+        }
+
         product.setQuantity(product.getQuantity() - quantity);
         Product saved = productRepository.save(product);
 
