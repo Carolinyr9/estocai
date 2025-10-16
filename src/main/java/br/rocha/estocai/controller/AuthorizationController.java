@@ -3,9 +3,11 @@ package br.rocha.estocai.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.rocha.estocai.config.security.TokenService;
 import br.rocha.estocai.model.User;
 import br.rocha.estocai.model.dtos.AuthenticationDto;
 import br.rocha.estocai.model.dtos.RegisterDto;
+import br.rocha.estocai.model.dtos.TokenResponseDto;
 import br.rocha.estocai.repository.UserRepository;
 import jakarta.validation.Valid;
 
@@ -27,17 +29,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthorizationController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDto data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+        return ResponseEntity.ok(new TokenResponseDto(token));
     }
 
     @PostMapping("/register")
