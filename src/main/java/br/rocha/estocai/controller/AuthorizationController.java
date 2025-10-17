@@ -9,6 +9,7 @@ import br.rocha.estocai.model.dtos.AuthenticationDto;
 import br.rocha.estocai.model.dtos.RegisterDto;
 import br.rocha.estocai.model.dtos.TokenResponseDto;
 import br.rocha.estocai.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authenticator", description = "Operations about authorization and authentication")
 public class AuthorizationController {
 
     @Autowired
