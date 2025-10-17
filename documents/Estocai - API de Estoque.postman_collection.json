@@ -1,0 +1,1116 @@
+{
+	"info": {
+		"_postman_id": "ea7ce0c2-978d-41f7-9d39-d9cbf9379c88",
+		"name": "Estocai - API de Estoque",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39752751"
+	},
+	"item": [
+		{
+			"name": "Autenticação",
+			"item": [
+				{
+					"name": "✅ Register - Criar Novo Usuário",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Caroliny\",\r\n    \"email\": \"carolinyer9@gmail.com\",\r\n    \"password\": \"1234566\",\r\n    \"role\": \"ADMIN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ Login - Sucesso (Armazena Token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Analisa a resposta JSON",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Verifica se a resposta tem o campo 'token'",
+									"if (jsonData && jsonData.token) {",
+									"    // Armazena o token na variável de coleção 'token'",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token de Acesso Salvo: \" + jsonData.token);",
+									"    pm.test(\"Status code is 200\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    pm.test(\"Token is present and saved\", function () {",
+									"        pm.expect(jsonData.token).to.be.a('string');",
+									"    });",
+									"} else {",
+									"    pm.test(\"Token is NOT present in response body\", false);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Caroliny\",\r\n    \"password\": \"1234566\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ Login - Credenciais Inválidas",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsuarioInvalido\",\r\n    \"password\": \"senhaErrada\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categoria (Category)",
+			"item": [
+				{
+					"name": "✅ GET - Listar Todas as Categorias",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RvY2FpIiwic3ViIjoiQ2Fyb2wiLCJleHAiOjE3NjA3MjUyODR9.ud6zuGo-vZuJY7AxuGYNt7FyCF_puwLYmzokrU4XiT0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ POST - Criar Nova Categoria",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RvY2FpIiwic3ViIjoiQ2Fyb2wiLCJleHAiOjE3NjA3MjUyODR9.ud6zuGo-vZuJY7AxuGYNt7FyCF_puwLYmzokrU4XiT0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Construção\",\r\n    \"description\": \"Utensilios para Construção\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Buscar Categoria por ID (1)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RvY2FpIiwic3ViIjoiQ2Fyb2wiLCJleHAiOjE3NjA3MjUyODR9.ud6zuGo-vZuJY7AxuGYNt7FyCF_puwLYmzokrU4XiT0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Buscar Categoria por Nome (Casa)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/name/Casa",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"name",
+								"Casa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ PUT - Atualizar Categoria Completa (ID 1)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Materiais de Construção\",\r\n    \"description\": \"Produtos essenciais para obras e reformas.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ PATCH - Atualizar Categoria Parcial (ID 1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RvY2FpIiwic3ViIjoiQ2Fyb2wiLCJleHAiOjE3NjA3MjUyODR9.ud6zuGo-vZuJY7AxuGYNt7FyCF_puwLYmzokrU4XiT0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Enxoval Atualizado\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ GET - ID Inexistente/Inválido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/9999",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ POST - Sem Token de Autorização",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Teste Sem Auth\",\r\n    \"description\": \"Deve falhar com 401/403\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ DELETE - Excluir Categoria por ID (1)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/categories/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Produto (Product)",
+			"item": [
+				{
+					"name": "✅ GET - Listar Todos os Produtos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ POST - Criar Novo Produto",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Martelo de Borracha\",\r\n    \"description\": \"Martelo para assentamento de pisos\",\r\n    \"price\": 10.99,\r\n    \"quantity\": 500,\r\n    \"categoryId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Buscar Produto por ID (1)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Buscar Produto por Nome (Martelo)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/name/Martelo",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"name",
+								"Martelo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ PUT - Atualizar Produto Completo (ID 1)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Martelo Atualizado\",\r\n    \"description\": \"Produto de Construção\",\r\n    \"price\": 15.00,\r\n    \"quantity\": 10000,\r\n    \"categoryId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ PATCH - Atualizar Produto Parcial (ID 1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\": 12.50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ GET - ID Inexistente/Inválido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/9999",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ DELETE - Excluir Produto por ID (1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/products/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movimento (Movement)",
+			"item": [
+				{
+					"name": "✅ GET - Listar Todos os Movimentos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Movimentos por Tipo (EXIT)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements/type/EXIT",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements",
+								"type",
+								"EXIT"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Movimentos por Descrição (ADDED)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements/description/ADDED",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements",
+								"description",
+								"ADDED"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Movimentos por Produto ID (1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements/product/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements",
+								"product",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ GET - Movimentos Entre Datas (Exemplo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements/date/2025-10-01/2025-10-15",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements",
+								"date",
+								"2025-10-01",
+								"2025-10-15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ GET - Produto ID Inexistente/Inválido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/movements/product/9999",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"movements",
+								"product",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuário (User) - Requer Autenticação",
+			"item": [
+				{
+					"name": "✅ PATCH - Atualizar Dados do Usuário (ID 1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"CarolSilva\",\r\n    \"email\": \"carol_nova@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/users/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ PATCH - Atualizar Nível de Acesso (Role - ID 1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"USER\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/users/roles/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"users",
+								"roles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ PATCH - ID de Usuário Inexistente/Inválido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Erro\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estocai/users/9999",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"users",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "❌ DELETE - Sem Token de Autorização",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/users/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✅ DELETE - Excluir Usuário por ID (1)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estocai/users/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estocai",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080",
+			"type": "default",
+			"description": {
+				"content": "Base URL da sua API",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "token",
+			"value": "SEU_TOKEN_AQUI",
+			"type": "string",
+			"description": {
+				"content": "Token JWT obtido após o login",
+				"type": "text/plain"
+			}
+		}
+	]
+}
