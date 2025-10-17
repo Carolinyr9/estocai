@@ -93,6 +93,7 @@ public class ProductController {
         }
     )
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(Pageable pageable){
         Page<ProductResponseDto> products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
@@ -108,6 +109,7 @@ public class ProductController {
         }
     )
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long id){
         ProductResponseDto product = productService.getProductById(id);
         return ResponseEntity.ok(product);
@@ -123,6 +125,7 @@ public class ProductController {
         }
     )
     @GetMapping("/name/{name}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ProductResponseDto> getProductByName(@PathVariable String name){
         ProductResponseDto product = productService.getProductByName(name);
         return ResponseEntity.ok(product);
