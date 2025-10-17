@@ -15,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.rocha.estocai.exceptions.CustomAccessDeniedHandler;
+import br.rocha.estocai.exceptions.CustomAuthenticationEntryPoint;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,11 +32,18 @@ public class SecurityConfigurations {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/products/**", "/categories/**", "/movements/**").permitAll()
-                .requestMatchers("/products/**", "/categories/**", "/movements/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+
+                .requestMatchers(HttpMethod.POST, "/estocai/products/**", "/estocai/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/estocai/products/**", "/estocai/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/estocai/products/**", "/estocai/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/estocai/products/**", "/estocai/categories/**", "/estocai/users/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(handling -> handling
+                .accessDeniedHandler(new CustomAccessDeniedHandler()) 
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) 
             )
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
