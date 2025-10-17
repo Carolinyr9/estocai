@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.rocha.estocai.model.dtos.MovementResponseDto;
@@ -32,6 +33,7 @@ public class MovementController {
         }
     )
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MovementResponseDto>> getAllMovements(Pageable pageable){
         Page<MovementResponseDto> movement = movementService.getAllMovements(pageable);
         return ResponseEntity.ok(movement);
@@ -46,6 +48,7 @@ public class MovementController {
         }
     )
     @GetMapping("/type/{type}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MovementResponseDto>> getMovementsByType(Pageable pageable, @PathVariable String type){
         Page<MovementResponseDto> movement = movementService.getMovementsByType(type, pageable);
         return ResponseEntity.ok(movement);
@@ -60,6 +63,7 @@ public class MovementController {
         }
     )
     @GetMapping("/description/{description}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MovementResponseDto>> getMovementsByDescription(Pageable pageable, @PathVariable String description){
         Page<MovementResponseDto> movement = movementService.getMovementsByDescription(description, pageable);
         return ResponseEntity.ok(movement);
@@ -74,6 +78,7 @@ public class MovementController {
         }
     )
     @GetMapping("/product/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MovementResponseDto>> getMovementsByDProductId(Pageable pageable, @PathVariable Long productId){
         Page<MovementResponseDto> movement = movementService.getMovementsByProductId(productId, pageable);
         return ResponseEntity.ok(movement);
@@ -88,6 +93,7 @@ public class MovementController {
         }
     )
     @GetMapping("/date/{startDate}/{endDate}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<MovementResponseDto>> getMovementsByDate(
             Pageable pageable,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
