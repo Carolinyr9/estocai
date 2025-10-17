@@ -28,5 +28,6 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
             @Param("endDate") java.sql.Timestamp endDate,
             Pageable pageable);
 
+    Page<Movement> findByUserId(Long id, Pageable pageable);
 
 }

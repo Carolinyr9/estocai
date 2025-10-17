@@ -78,6 +78,11 @@ public class MovementService {
     }
 
     @Transactional(readOnly = true)
+    public Page<MovementResponseDto> getMovementsByUser(Long id, Pageable pageable){
+        return movementRepository.findByUserId(id, pageable).map(mapper::movementToMovementResponseDto);
+    }
+
+    @Transactional(readOnly = true)
     public Page<MovementResponseDto> getMovementsByDate(LocalDate startDate, LocalDate endDate, Pageable pageable){
         Timestamp start = Timestamp.valueOf(startDate.atStartOfDay());
         Timestamp end = Timestamp.valueOf(endDate.atTime(23, 59, 59));

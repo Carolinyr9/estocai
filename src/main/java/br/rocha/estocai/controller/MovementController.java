@@ -79,8 +79,23 @@ public class MovementController {
     )
     @GetMapping("/product/{productId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<MovementResponseDto>> getMovementsByDProductId(Pageable pageable, @PathVariable Long productId){
+    public ResponseEntity<Page<MovementResponseDto>> getMovementsByProductId(Pageable pageable, @PathVariable Long productId){
         Page<MovementResponseDto> movement = movementService.getMovementsByProductId(productId, pageable);
+        return ResponseEntity.ok(movement);
+    }
+
+    @Operation(
+        summary = "Get movement by user id",
+        description = "Return a movement by user",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Movement found"),
+            @ApiResponse(responseCode = "404", description = "Movement not found")
+        }
+    )
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<MovementResponseDto>> getMovementsByUser(Pageable pageable, @PathVariable Long userId){
+        Page<MovementResponseDto> movement = movementService.getMovementsByUser(userId, pageable);
         return ResponseEntity.ok(movement);
     }
 

@@ -51,6 +51,9 @@ public class Movement {
     @Enumerated(EnumType.STRING)
     private MovementDescription description;
 
-    //private User user
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
 }
