@@ -38,4 +38,9 @@ public class Category {
     @JsonIgnore
     private List<Product> products;
 
+    public Category(String name, String description){
+        this.name = name;
+        this.description = description;
+    }
+
 }
