@@ -26,7 +26,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto createCategory(CategoryRequestDto data){
-        if(findExistingCategoryByName(data.name()));
+        findExistingCategoryByName(data.name());
 
         Category category = mapper.categoryRequestDtoToCategory(data);
         Category saved = categoryRepository.save(category);
@@ -35,7 +35,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto updateCategory(Long id, CategoryRequestDto data){
-        if(findExistingCategoryByName(data.name()));
+        validateCategoryNameUniqueness(data.name(), id);
 
         Category existingCategory = findExistingCategory(id);
         existingCategory.setName(data.name());
@@ -45,7 +45,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto updateCategoryPartial(Long id, CategoryPatchDto data){
-        data.name().ifPresent(this::findExistingCategoryByName);
+        data.name().ifPresent(name -> validateCategoryNameUniqueness(name, id));
 
         Category existingCategory = findExistingCategory(id);
         data.name().ifPresent(existingCategory::setName);
@@ -93,4 +93,12 @@ public class CategoryService {
         }
         return true;
     }
+
+    private void validateCategoryNameUniqueness(String name, Long currentId) {
+        Category found = categoryRepository.findByName(name);
+        if (found != null && !found.getId().equals(currentId)) {
+            throw new NameConflictException("Already there is a category with this name: " + name);
+        }
+    }
+
 }
