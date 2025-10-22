@@ -18,4 +18,10 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(NameConflictException.class)
+    public ResponseEntity<ErrorResponse> nameConflictException(NameConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
+    }
 }
+

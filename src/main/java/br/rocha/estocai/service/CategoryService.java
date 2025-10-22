@@ -77,4 +77,9 @@ public class CategoryService {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found " + id));
     }
+
+
+    private Category findExistingCategoryByName(String name){
+        return categoryRepository.findByName(name);
+    }
 }
