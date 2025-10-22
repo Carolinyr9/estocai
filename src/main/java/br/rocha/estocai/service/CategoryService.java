@@ -35,6 +35,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto updateCategory(Long id, CategoryRequestDto data){
+        if(findExistingCategoryByName(data.name()));
+
         Category existingCategory = findExistingCategory(id);
         existingCategory.setName(data.name());
         existingCategory.setDescription(data.description());
@@ -43,6 +45,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto updateCategoryPartial(Long id, CategoryPatchDto data){
+        data.name().ifPresent(this::findExistingCategoryByName);
+
         Category existingCategory = findExistingCategory(id);
         data.name().ifPresent(existingCategory::setName);
         data.description().ifPresent(existingCategory::setDescription);
