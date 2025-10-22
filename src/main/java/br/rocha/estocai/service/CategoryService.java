@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.rocha.estocai.exceptions.NameConflictException;
 import br.rocha.estocai.exceptions.ResourceNotFoundException;
 import br.rocha.estocai.mappers.CategoryMapper;
 import br.rocha.estocai.model.Category;
@@ -25,6 +26,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto createCategory(CategoryRequestDto data){
+        if(findExistingCategoryByName(data.name()));
+
         Category category = mapper.categoryRequestDtoToCategory(data);
         Category saved = categoryRepository.save(category);
         return mapper.categoryToCategoryResponseDto(saved);
@@ -79,7 +82,11 @@ public class CategoryService {
     }
 
 
-    private Category findExistingCategoryByName(String name){
-        return categoryRepository.findByName(name);
+    private Boolean findExistingCategoryByName(String name){
+
+        if(categoryRepository.findByName(name) != null){
+            throw new NameConflictException("Already there is a category with this name " + name);
+        }
+        return true;
     }
 }
