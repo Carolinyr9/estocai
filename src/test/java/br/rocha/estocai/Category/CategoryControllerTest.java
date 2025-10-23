@@ -2,6 +2,10 @@ package br.rocha.estocai.Category;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,9 +80,6 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     void getAllCategories() throws Exception {
-        List<Category> categoryList = categoryRepository.findAll();
-        Page<Category> page = new PageImpl<>(categoryList);
-
         mockMvc.perform(get("/categories")
                 .contentType("application/json"))
                 .andDo(print())
@@ -140,6 +141,71 @@ public class CategoryControllerTest {
                 .content(json))
             .andDo(print())
             .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void updateCategory() throws Exception {
+        Category category = categoryRepository.findAll().get(0);
+
+        String json = """
+                    {
+                        "name": "Category Super New",
+                        "description": "New Description"
+                    }
+                """;
+
+        mockMvc.perform(put("/categories/" + category.getId())
+                .contentType("application/json")
+                .content(json))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.description").value("New Description"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void updateCategoryPartial() throws Exception {
+        Category category = categoryRepository.findAll().get(0);
+
+        String json = """
+                    {
+                        "description": "Our New Description"
+                    }
+                """;
+
+        mockMvc.perform(patch("/categories/" + category.getId())
+                .contentType("application/json")
+                .content(json))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.description").value("Our New Description"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void deleteCategory() throws Exception {
+        Category category = categoryRepository.findAll().get(0);
+
+        mockMvc.perform(delete("/categories/" + category.getId())
+                .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void deleteCategory_WithoutAuth() throws Exception {
+        Category category = categoryRepository.findAll().get(0);
+
+        mockMvc.perform(delete("/categories/" + category.getId())
+                .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 
     
