@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -28,10 +29,12 @@ public class Category {
     private Long id;
 
     @NonNull
+    @NotBlank(message = "Name is required")
     @Column(unique = true)
     private String name;
 
     @NonNull
+    @NotBlank(message = "Description is required")
     private String description;
     
     @OneToMany(mappedBy = "category")
