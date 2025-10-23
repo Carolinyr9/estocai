@@ -49,7 +49,7 @@ public class CategoryControllerTest {
     
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
-    void getCategoryById() throws Exception {
+    void shouldReturnCategory_WhenGetById() throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         mockMvc.perform(get("/categories/" + category.getId())
@@ -64,7 +64,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
-    void getCategoryByName() throws Exception {
+    void shouldReturnCategory_WhenGetByName()  throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         mockMvc.perform(get("/categories/name/" + category.getName())
@@ -79,7 +79,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
-    void getAllCategories() throws Exception {
+    void shouldReturnAllCategories_WhenUserHasUserRole() throws Exception {
         mockMvc.perform(get("/categories")
                 .contentType("application/json"))
                 .andDo(print())
@@ -88,10 +88,20 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.content[0].description").value("Description"));
     }
 
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void shouldReturnAllCategories_WhenUserHasAdminRole() throws Exception {
+        mockMvc.perform(get("/categories")
+                .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].name").value("Category"))
+                .andExpect(jsonPath("$.content[0].description").value("Description"));
+    }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void createCategory() throws Exception {
+    void shouldCreateCategory_WhenDataIsValid() throws Exception {
         String json = """
                     {
                         "name": "Category New",
@@ -110,7 +120,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void createCategory_ConflictName() throws Exception {
+    void shouldReturnConflict_WhenCategoryNameAlreadyExists() throws Exception {
         String json = """
                     {
                         "name": "Category",
@@ -128,7 +138,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void createCategory_BlankParam() throws Exception {
+    void shouldReturnBadRequest_WhenDescriptionIsBlank() throws Exception {
         String json = """
                     {
                         "name": "Category Super New",
@@ -146,7 +156,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void updateCategory() throws Exception {
+    void shouldUpdateCategory_WhenDataIsValid() throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         String json = """
@@ -167,7 +177,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void updateCategoryPartial() throws Exception {
+    void shouldUpdateCategoryPartially_WhenOnlySomeFieldsProvided() throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         String json = """
@@ -187,7 +197,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void deleteCategory() throws Exception {
+    void shouldDeleteCategory_WhenUserHasAdminRole() throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         mockMvc.perform(delete("/categories/" + category.getId())
@@ -199,7 +209,7 @@ public class CategoryControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
-    void deleteCategory_WithoutAuth() throws Exception {
+    void shouldReturnForbidden_WhenUserTriesToDeleteWithoutAdminRole() throws Exception {
         Category category = categoryRepository.findAll().get(0);
 
         mockMvc.perform(delete("/categories/" + category.getId())

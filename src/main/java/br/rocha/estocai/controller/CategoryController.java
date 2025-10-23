@@ -37,7 +37,7 @@ public class CategoryController {
         }
     )
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<CategoryResponseDto>> getAllCategories(Pageable pageable) {
         return ResponseEntity.ok(categoryService.getAllCategories(pageable));
     }
@@ -51,7 +51,7 @@ public class CategoryController {
         }
     )
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
@@ -65,7 +65,7 @@ public class CategoryController {
         }
     )
     @GetMapping("/name/{name}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CategoryResponseDto> getCategoryByName(@PathVariable String name) {
         return ResponseEntity.ok(categoryService.getCategoryByName(name));
     }
