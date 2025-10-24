@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import br.rocha.estocai.exceptions.NameConflictException;
 import br.rocha.estocai.exceptions.ResourceNotFoundException;
 import br.rocha.estocai.mappers.CategoryMapper;
 import br.rocha.estocai.mappers.ProductMapper;
@@ -37,6 +39,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto data){
+        findExistingProductByName(data.name());
+
         Product product = productMapper.productRequestDtoToProduct(data);
 
         product.setCategory(findCategory(data.categoryId()));
@@ -48,6 +52,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto data){
+        validateProductNameUniqueness(data.name(), id);
+
         Product existingProduct = findExistingProduct(id);
 
         existingProduct.setName(data.name());
@@ -65,6 +71,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto updateProductPartial(Long id, ProductPatchDto data){
+        data.name().ifPresent(name -> validateProductNameUniqueness(name, id));
+
         Product existingProduct = findExistingProduct(id);
 
         data.name().ifPresent(existingProduct::setName);
@@ -177,6 +185,21 @@ public class ProductService {
             movementService.decreaseQuantity(product);
         } else {
             movementService.increaseQuantity(product);
+        }
+    }
+
+    private Boolean findExistingProductByName(String name){
+
+        if(productRepository.findByName(name) != null){
+            throw new NameConflictException("Already there is a product with this name " + name);
+        }
+        return true;
+    }
+
+    private void validateProductNameUniqueness(String name, Long currentId) {
+        Product found = productRepository.findByName(name);
+        if (found != null && !found.getId().equals(currentId)) {
+            throw new NameConflictException("Already there is a product with this name: " + name);
         }
     }
 }
