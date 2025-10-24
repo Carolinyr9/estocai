@@ -62,4 +62,12 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public Product(String name, String description, Double price, Integer quantity, Category category){
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+    }
+
 }
