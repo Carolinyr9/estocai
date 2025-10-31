@@ -134,7 +134,7 @@ public class ProductService {
     public ProductResponseDto decreaseQuantity(Long id, Integer quantity){
         Product product = findExistingProduct(id);
 
-        if(quantity > product.getQuantity()){
+        if(quantity > product.getQuantity() || quantity == 0 || quantity < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
 
@@ -150,6 +150,10 @@ public class ProductService {
     public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
         Product product = findExistingProduct(id);
 
+        if(quantity == 0 || quantity < 0){
+            throw new InvalidParameterException("The new quantity cannot be negative");
+        }
+
         int before = product.getQuantity();
         product.setQuantity(quantity);
         Product saved = productRepository.save(product);
@@ -163,6 +167,11 @@ public class ProductService {
     public ProductResponseDto increaseQuantity(Long id, Integer quantity){
         Product product = findExistingProduct(id);
         product.setQuantity(product.getQuantity() + quantity);
+
+        if(quantity == 0 || quantity < 0){
+            throw new InvalidParameterException("The new quantity cannot be negative");
+        }
+        
         Product saved = productRepository.save(product);
 
         movementService.increaseQuantity(saved);
