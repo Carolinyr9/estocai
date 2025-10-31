@@ -150,7 +150,7 @@ public class ProductService {
     public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
         Product product = findExistingProduct(id);
 
-        if(quantity == 0 || quantity < 0){
+        if(quantity < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
 
@@ -171,7 +171,7 @@ public class ProductService {
         if(quantity == 0 || quantity < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
-        
+
         Product saved = productRepository.save(product);
 
         movementService.increaseQuantity(saved);

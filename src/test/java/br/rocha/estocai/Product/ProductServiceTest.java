@@ -304,6 +304,23 @@ public class ProductServiceTest {
     }
 
     @Test
+    void increaseQuantity_InvalidQuantity() {
+        Long id = 1L;
+        Integer quantity = 0;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+
+        assertThrows(InvalidParameterException.class, () -> service.increaseQuantity(id, quantity));
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
     void setSpecificQuantity_ValidArgs() {
         Long id = 1L;
         Integer quantity = 2;
@@ -342,6 +359,23 @@ public class ProductServiceTest {
         when(repository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.setSpecificQuantity(id, quantity));
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void setSpecificQuantity_InvalidQuantity() {
+        Long id = 1L;
+        Integer quantity = -1;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+
+        assertThrows(InvalidParameterException.class, () -> service.setSpecificQuantity(id, quantity));
         verify(repository, never()).save(any(Product.class));
     }
     
