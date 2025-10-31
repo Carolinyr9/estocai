@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -212,5 +214,82 @@ public class ProductServiceTest {
         assertThrows(ResourceNotFoundException.class,  () -> service.deleteProduct(id));
 
     }
+
+    @Test
+    void decreaseQuantity_ValidArgs() {
+        Long id = 1L;
+        Integer decrease = 2;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        Product updated = new Product("Product", "Description", 11.99, 10, category);
+        ReflectionTestUtils.setField(updated, "id", id);
+
+        ProductResponseDto expectedDto = new ProductResponseDto(
+            id, "Product", "Description", 11.99, 10, category
+        );
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+        when(repository.save(original)).thenReturn(updated);
+        doNothing().when(movementService).decreaseQuantity(any());
+        when(mapper.productToProductResponseDto(updated)).thenReturn(expectedDto);
+
+        ProductResponseDto result = service.decreaseQuantity(id, decrease);
+
+        assertEquals(expectedDto, result);
+        assertEquals(10, result.quantity());
+    }
+
+    @Test
+    void decreaseQuantity_InvalidArgs() {
+        Long id = 1L;
+        Integer decrease = 15;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+
+        assertThrows(InvalidParameterException.class, () -> service.decreaseQuantity(id, decrease));
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void increaseQuantity_ValidArgs() {
+        Long id = 1L;
+        Integer increase = 2;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        Product updated = new Product("Product", "Description", 11.99, 14, category);
+        ReflectionTestUtils.setField(updated, "id", id);
+
+        ProductResponseDto expectedDto = new ProductResponseDto(
+            id, "Product", "Description", 11.99, 14, category
+        );
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+        when(repository.save(original)).thenReturn(updated);
+        doNothing().when(movementService).increaseQuantity(any());
+        when(mapper.productToProductResponseDto(updated)).thenReturn(expectedDto);
+
+        ProductResponseDto result = service.increaseQuantity(id, increase);
+
+        assertEquals(expectedDto, result);
+        assertEquals(14, result.quantity());
+    }
+
+
     
 }
