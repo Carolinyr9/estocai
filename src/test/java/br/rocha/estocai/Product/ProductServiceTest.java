@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -290,6 +291,58 @@ public class ProductServiceTest {
         assertEquals(14, result.quantity());
     }
 
+    @Test
+    void increaseQuantity_InvalidID() {
+        Long id = 999L;
+        Integer increase = 2;
 
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        
+        assertThrows(ResourceNotFoundException.class, () -> service.increaseQuantity(id, increase));
+
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void setSpecificQuantity_ValidArgs() {
+        Long id = 1L;
+        Integer quantity = 2;
+
+        Category category = new Category("Category", "Description");
+        ReflectionTestUtils.setField(category, "id", 1L);
+
+        Product original = new Product("Product", "Description", 11.99, 12, category);
+        ReflectionTestUtils.setField(original, "id", id);
+
+        Product updated = new Product("Product", "Description", 11.99, 2, category);
+        ReflectionTestUtils.setField(updated, "id", id);
+
+        ProductResponseDto expectedDto = new ProductResponseDto(
+            id, "Product", "Description", 11.99, 2, category
+        );
+
+        when(repository.findById(id)).thenReturn(Optional.of(original));
+        when(repository.save(original)).thenReturn(updated);
+        lenient().doNothing().when(movementService).increaseQuantity(any(Product.class));
+        lenient().doNothing().when(movementService).decreaseQuantity(any(Product.class));
+        when(mapper.productToProductResponseDto(updated)).thenReturn(expectedDto);
+
+        ProductResponseDto result = service.setSpecificQuantity(id, quantity);
+
+        assertEquals(expectedDto, result);
+        assertEquals(quantity, result.quantity());
+    }
+
+    @Test
+    void setSpecificQuantity_InvalidId() {
+        Long id = 999L;
+        Integer quantity = 2;
+
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.setSpecificQuantity(id, quantity));
+        verify(repository, never()).save(any(Product.class));
+    }
     
 }
