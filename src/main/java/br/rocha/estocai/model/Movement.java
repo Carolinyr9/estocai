@@ -35,7 +35,7 @@ public class Movement {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = true)
     @JsonBackReference
     private Product product;
     
