@@ -56,4 +56,11 @@ public class Movement {
     @JsonBackReference
     private User user;
 
+    public Movement(Product product, Date date, MovementType type, MovementDescription description) {
+        this.product = product;
+        this.date = date;
+        this.type = type;
+        this.description = description;
+    }
+
 }

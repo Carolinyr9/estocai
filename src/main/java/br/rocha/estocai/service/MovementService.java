@@ -91,6 +91,11 @@ public class MovementService {
     }
 
     private void registerMovement(Product product, MovementType type, MovementDescription description) {
+
+        if (product == null) {
+            throw new NullPointerException("Product cannot be null");
+        }
+
         Movement movement = new Movement();
         movement.setProduct(product);
         movement.setDate(new Date());
