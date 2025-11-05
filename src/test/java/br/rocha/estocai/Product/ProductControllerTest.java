@@ -1,5 +1,6 @@
 package br.rocha.estocai.Product;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -197,6 +198,46 @@ public class ProductControllerTest {
             .andExpect(jsonPath("$.quantity").value(quantity));
     }
 
-    
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void shouldDecreaseQuantity_WhenDataIsValid() throws Exception {
+        Product product = productRepository.findAll().get(0);
+        Integer quantity = product.getQuantity() - 1;
+
+        String json = """
+            {
+                "quantity": 1
+            }
+        """;
+
+        mockMvc.perform(patch("/products/decreaseQuantity/" + product.getId())
+                .contentType("application/json")
+                .content(json))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Product"))
+            .andExpect(jsonPath("$.quantity").value(quantity));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void shouldSetQuantity_WhenDataIsValid() throws Exception {
+        Product product = productRepository.findAll().get(0);
+        Integer quantity = 10;
+
+        String json = """
+            {
+                "quantity": 10
+            }
+        """;
+
+        mockMvc.perform(patch("/products/setQuantity/" + product.getId())
+                .contentType("application/json")
+                .content(json))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Product"))
+            .andExpect(jsonPath("$.quantity").value(quantity));
+    }    
 
 }
