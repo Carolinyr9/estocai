@@ -182,7 +182,11 @@ public class ProductControllerTest {
         Product product = productRepository.findAll().get(0);
         Integer quantity = product.getQuantity() + 1;
 
-        String json = "1";
+        String json = """
+            {
+                "quantity": 1
+            }
+        """;
 
         mockMvc.perform(patch("/products/increaseQuantity/" + product.getId())
                 .contentType("application/json")
@@ -192,5 +196,7 @@ public class ProductControllerTest {
             .andExpect(jsonPath("$.name").value("Product"))
             .andExpect(jsonPath("$.quantity").value(quantity));
     }
+
+    
 
 }

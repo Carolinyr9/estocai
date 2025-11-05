@@ -32,6 +32,7 @@ import br.rocha.estocai.model.Product;
 import br.rocha.estocai.model.dtos.CategoryResponseDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
+import br.rocha.estocai.model.dtos.QuantityRequestDto;
 import br.rocha.estocai.repository.ProductRepository;
 import br.rocha.estocai.service.CategoryService;
 import br.rocha.estocai.service.MovementService;
@@ -219,7 +220,7 @@ public class ProductServiceTest {
     @Test
     void decreaseQuantity_ValidArgs() {
         Long id = 1L;
-        Integer decrease = 2;
+        QuantityRequestDto decrease = new QuantityRequestDto(2);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);
@@ -248,7 +249,7 @@ public class ProductServiceTest {
     @Test
     void decreaseQuantity_InvalidArgs() {
         Long id = 1L;
-        Integer decrease = 15;
+        QuantityRequestDto decrease = new QuantityRequestDto(15);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);
@@ -265,7 +266,7 @@ public class ProductServiceTest {
     @Test
     void increaseQuantity_ValidArgs() {
         Long id = 1L;
-        Integer increase = 2;
+        QuantityRequestDto increase = new QuantityRequestDto(2);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);
@@ -294,7 +295,7 @@ public class ProductServiceTest {
     @Test
     void increaseQuantity_InvalidID() {
         Long id = 999L;
-        Integer increase = 2;
+        QuantityRequestDto increase = new QuantityRequestDto(2);
 
         when(repository.findById(id)).thenReturn(Optional.empty());
         
@@ -306,7 +307,7 @@ public class ProductServiceTest {
     @Test
     void increaseQuantity_InvalidQuantity() {
         Long id = 1L;
-        Integer quantity = 0;
+        QuantityRequestDto quantity = new QuantityRequestDto(0);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);
@@ -323,7 +324,7 @@ public class ProductServiceTest {
     @Test
     void setSpecificQuantity_ValidArgs() {
         Long id = 1L;
-        Integer quantity = 2;
+        QuantityRequestDto quantity = new QuantityRequestDto(2);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);
@@ -347,14 +348,13 @@ public class ProductServiceTest {
         ProductResponseDto result = service.setSpecificQuantity(id, quantity);
 
         assertEquals(expectedDto, result);
-        assertEquals(quantity, result.quantity());
+        assertEquals(quantity.quantity(), result.quantity());
     }
 
     @Test
     void setSpecificQuantity_InvalidId() {
         Long id = 999L;
-        Integer quantity = 2;
-
+        QuantityRequestDto quantity = new QuantityRequestDto(1);
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
@@ -365,7 +365,7 @@ public class ProductServiceTest {
     @Test
     void setSpecificQuantity_InvalidQuantity() {
         Long id = 1L;
-        Integer quantity = -1;
+        QuantityRequestDto quantity = new QuantityRequestDto(-1);
 
         Category category = new Category("Category", "Description");
         ReflectionTestUtils.setField(category, "id", 1L);

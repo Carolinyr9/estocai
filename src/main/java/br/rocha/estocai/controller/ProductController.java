@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
+import br.rocha.estocai.model.dtos.QuantityRequestDto;
 import br.rocha.estocai.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -142,7 +143,7 @@ public class ProductController {
     )
     @PatchMapping("/increaseQuantity/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductResponseDto> increaseQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+    public ResponseEntity<ProductResponseDto> increaseQuantity(@PathVariable Long id, @RequestBody QuantityRequestDto quantity){
         ProductResponseDto product = productService.increaseQuantity(id, quantity);
         return ResponseEntity.ok(product);
     }
@@ -158,7 +159,7 @@ public class ProductController {
     )
     @PatchMapping("/decreaseQuantity/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductResponseDto> decreaseQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+    public ResponseEntity<ProductResponseDto> decreaseQuantity(@PathVariable Long id, @RequestBody QuantityRequestDto quantity){
         ProductResponseDto product = productService.decreaseQuantity(id, quantity);
         return ResponseEntity.ok(product);
     }
@@ -174,7 +175,7 @@ public class ProductController {
     )
     @PatchMapping("/setQuantity/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductResponseDto> setSpecifiQuantity(@PathVariable Long id, @RequestBody Integer quantity){
+    public ResponseEntity<ProductResponseDto> setSpecifiQuantity(@PathVariable Long id, @RequestBody QuantityRequestDto quantity){
         ProductResponseDto product = productService.setSpecificQuantity(id, quantity);
         return ResponseEntity.ok(product);
     }

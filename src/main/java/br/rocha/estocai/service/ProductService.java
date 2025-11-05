@@ -17,6 +17,7 @@ import br.rocha.estocai.model.dtos.CategoryResponseDto;
 import br.rocha.estocai.model.dtos.ProductPatchDto;
 import br.rocha.estocai.model.dtos.ProductRequestDto;
 import br.rocha.estocai.model.dtos.ProductResponseDto;
+import br.rocha.estocai.model.dtos.QuantityRequestDto;
 import br.rocha.estocai.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,14 +132,14 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto decreaseQuantity(Long id, Integer quantity){
+    public ProductResponseDto decreaseQuantity(Long id, QuantityRequestDto requestDto){
         Product product = findExistingProduct(id);
 
-        if(quantity > product.getQuantity() || quantity == 0 || quantity < 0){
+        if(requestDto.quantity() > product.getQuantity() || requestDto.quantity() == 0 || requestDto.quantity() < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
 
-        product.setQuantity(product.getQuantity() - quantity);
+        product.setQuantity(product.getQuantity() - requestDto.quantity());
         Product saved = productRepository.save(product);
 
         movementService.decreaseQuantity(product);
@@ -147,28 +148,28 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto setSpecificQuantity(Long id, Integer quantity){
+    public ProductResponseDto setSpecificQuantity(Long id, QuantityRequestDto requestDto){
         Product product = findExistingProduct(id);
 
-        if(quantity < 0){
+        if(requestDto.quantity() < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
 
         int before = product.getQuantity();
-        product.setQuantity(quantity);
+        product.setQuantity(requestDto.quantity());
         Product saved = productRepository.save(product);
 
-        verifyAndMapMovement(before, quantity, saved);
+        verifyAndMapMovement(before, requestDto.quantity(), saved);
 
         return productMapper.productToProductResponseDto(saved);
     }
 
     @Transactional
-    public ProductResponseDto increaseQuantity(Long id, Integer quantity){
+    public ProductResponseDto increaseQuantity(Long id, QuantityRequestDto requestDto){
         Product product = findExistingProduct(id);
-        product.setQuantity(product.getQuantity() + quantity);
+        product.setQuantity(product.getQuantity() + requestDto.quantity());
 
-        if(quantity == 0 || quantity < 0){
+        if(requestDto.quantity() == 0 || requestDto.quantity() < 0){
             throw new InvalidParameterException("The new quantity cannot be negative");
         }
 
